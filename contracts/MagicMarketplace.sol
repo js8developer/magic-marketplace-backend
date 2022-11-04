@@ -13,14 +13,14 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-error NftMarketplace__PriceMustBeAboveZero();
-error NftMarketplace__NotApprovedForMarketplace();
-error NftMarketplace__AlreadyListed(address nftAddress, uint256 tokenId);
-error NftMarketplace__NotOwner();
-error NftMarketplace__NotListed(address nftAddress, uint256 tokenId);
-error NftMarketplace__PriceNotMet(address nftAddress, uint256 tokenId, uint256 price);
-error NftMarketplace__NoProceeds();
-error NftMarketplace__TransferFailed();
+error MagicMarketplace__PriceMustBeAboveZero();
+error MagicMarketplace__NotApprovedForMarketplace();
+error MagicMarketplace__AlreadyListed(address nftAddress, uint256 tokenId);
+error MagicMarketplace__NotOwner();
+error MagicMarketplace__NotListed(address nftAddress, uint256 tokenId);
+error MagicMarketplace__PriceNotMet(address nftAddress, uint256 tokenId, uint256 price);
+error MagicMarketplace__NoProceeds();
+error MagicMarketplace__TransferFailed();
 
 
 contract MagicMarketplace is ReentrancyGuard {
@@ -71,7 +71,7 @@ contract MagicMarketplace is ReentrancyGuard {
     modifier notListed(address nftAddress, uint256 tokenId, address owner) {
         MarketItem memory listing = s_listings[nftAddress][tokenId];
         if (listing.price > 0){
-            revert NftMarketplace__AlreadyListed(nftAddress, tokenId);
+            revert MagicMarketplace__AlreadyListed(nftAddress, tokenId);
         }
         _;
     }
@@ -80,7 +80,7 @@ contract MagicMarketplace is ReentrancyGuard {
         IERC721 nft = IERC721(nftAddress);
         address owner = nft.ownerOf(tokenId);
         if (spender != owner) {
-            revert NftMarketplace__NotOwner();
+            revert MagicMarketplace__NotOwner();
         }
         _;
     }
@@ -91,7 +91,7 @@ contract MagicMarketplace is ReentrancyGuard {
     ) {
         MarketItem memory listing = s_listings[nftAddress][tokenId];
         if (listing.price <= 0){
-            revert NftMarketplace__NotListed(nftAddress, tokenId);
+            revert MagicMarketplace__NotListed(nftAddress, tokenId);
         }
         _;
     }
@@ -114,12 +114,12 @@ contract MagicMarketplace is ReentrancyGuard {
         
         // listing price for more than 0 wei.
         if (price <= 0) {
-            revert NftMarketplace__PriceMustBeAboveZero();
+            revert MagicMarketplace__PriceMustBeAboveZero();
         }
 
         // Check to see if the marketplace has been approved by the owner to transfer the nft if it sells. 
         if (nftIsApprovedForListing(nftAddress, tokenId) == false){
-            revert NftMarketplace__NotApprovedForMarketplace();
+            revert MagicMarketplace__NotApprovedForMarketplace();
         }
         
         // Marketplace is approved, continue!
@@ -209,12 +209,12 @@ contract MagicMarketplace is ReentrancyGuard {
     function withdrawProceeds() external {
         uint256 proceeds = s_proceeds[msg.sender];
         if (proceeds <= 0){
-            revert NftMarketplace__NoProceeds();
+            revert MagicMarketplace__NoProceeds();
         }
         s_proceeds[msg.sender] = 0;
         (bool success, ) = payable(msg.sender).call{value: proceeds}("");
         if (!success){
-            revert NftMarketplace__TransferFailed();
+            revert MagicMarketplace__TransferFailed();
         }
     }
 

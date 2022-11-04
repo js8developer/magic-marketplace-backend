@@ -46,7 +46,7 @@ module.exports = {
     deployer: {
       default: 0,
     },
-    player: {
+    guest: {
       default: 1
     }
   }
