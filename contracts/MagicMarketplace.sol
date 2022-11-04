@@ -162,9 +162,9 @@ contract MagicMarketplace is ReentrancyGuard {
         // create listedItem in memory
         MarketItem memory listedItem = s_listings[nftAddress][tokenId];
         // check to see if the amount sent from the buyer is more than the listed price
-        require(msg.value >= listedItem.price, 'Price Not Met');
-
-        // if not, revert with error PriceNotMet(...)
+        if (msg.value < listedItem.price){
+            revert MagicMarketplace__PriceNotMet(nftAddress, tokenId, listedItem.price);
+        }
 
         // increase the sellers proceeds by the msg.value amount
         s_proceeds[listedItem.seller] += msg.value;
@@ -250,6 +250,26 @@ contract MagicMarketplace is ReentrancyGuard {
             return false;
         }
         return true;
+    }
+
+    function fetchMarketItem(uint256 itemId) public view returns(MarketItem memory){
+        return s_marketItems[itemId];
+    }
+
+    function fetchListing(address nftAddress, uint256 tokenId) public view returns(MarketItem memory){
+        return s_listings[nftAddress][tokenId];
+    }
+
+    function fetchItemsForSaleCount() public view returns (uint256){
+        return s_itemIds.current();
+    }
+
+    function fetchItemsSoldCount() public view returns (uint256){
+        return s_itemsSold.current();
+    }
+
+    function fetchProceeds(address _address) public view returns(uint256){
+        return s_proceeds[_address];
     }
 
 }
