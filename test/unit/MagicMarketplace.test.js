@@ -139,4 +139,135 @@ describe("MagicMarketplace", function () {
             expect(await magicMarketplace.buyItem(mockNFT.address, TOKEN_ID, { value: PRICE })).to.emit("ItemBought")
         })
     })
+
+    describe("cancelListing", function(){
+
+        it("Reverts if caller is not the owner of the listing/nft", async function(){
+            await magicMarketplace.listItemForSale(mockNFT.address, TOKEN_ID, PRICE)
+            const guestConnectedMagicMarketplace = await magicMarketplace.connect(guest)
+            await expect(guestConnectedMagicMarketplace.cancelListing(mockNFT.address, TOKEN_ID)).to.be.revertedWithCustomError(
+                magicMarketplace,
+                "MagicMarketplace__NotOwner"
+            )
+        })
+
+        it("Reverts if listing doesn't exist", async function(){
+            await expect(magicMarketplace.cancelListing(mockNFT.address, TOKEN_ID)).to.be.revertedWithCustomError(
+                magicMarketplace,
+                "MagicMarketplace__NotListed"
+            )
+        })
+
+        it("Successfully cancels listing and removes nft from marketplace", async function (){
+            await magicMarketplace.listItemForSale(mockNFT.address, TOKEN_ID, PRICE)
+
+            const listedItem = await magicMarketplace.fetchListing(mockNFT.address, TOKEN_ID)
+            assert.equal(listedItem.nftAddress, mockNFT.address)
+            assert.equal(listedItem.seller, deployer.address)
+            assert.equal(listedItem.owner, magicMarketplace.address)
+            assert.equal(listedItem.itemId.toString(), "1")
+
+            await magicMarketplace.cancelListing(mockNFT.address, TOKEN_ID)
+
+            // make sure item is deleted from s_listings
+            const deletedListing = await magicMarketplace.fetchListing(mockNFT.address, TOKEN_ID)
+            assert.equal(deletedListing.nftAddress, zeroAddress)
+            assert.equal(deletedListing.seller, zeroAddress)
+            assert.equal(deletedListing.owner, zeroAddress)
+            assert.equal(deletedListing.itemId.toString(), "0")
+
+            // make sure item is deleted from s_marketItems
+            const deletedMarketItem = await magicMarketplace.fetchMarketItem(1)
+            assert.equal(deletedMarketItem.nftAddress, zeroAddress)
+            assert.equal(deletedMarketItem.seller, zeroAddress)
+            assert.equal(deletedMarketItem.owner, zeroAddress)
+            assert.equal(deletedMarketItem.itemId.toString(), "0")
+        })
+
+        it("Emits ItemCanceled event when listing canceled by owner", async function(){
+            await magicMarketplace.listItemForSale(mockNFT.address, TOKEN_ID, PRICE)
+            expect(await magicMarketplace.cancelListing(mockNFT.address, TOKEN_ID)).to.emit("ItemCanceled")
+        })
+
+    })
+
+    describe("updateListing", function(){
+        
+        it("Reverts when caller is not the owner of the listing", async function(){
+            await magicMarketplace.listItemForSale(mockNFT.address, TOKEN_ID, PRICE)
+
+            await magicMarketplace.connect(guest)
+            const NEW_PRICE = ethers.utils.parseEther("0.002")
+
+            expect(await magicMarketplace.updateListing(mockNFT.address, TOKEN_ID, NEW_PRICE)).to.be.revertedWithCustomError(
+                magicMarketplace,
+                "MagicMarketplace__NotOwner"
+            )
+        })
+
+        it("Reverts when the listing does not exist in marketplace", async function(){
+            await expect(magicMarketplace.updateListing(mockNFT.address, TOKEN_ID, PRICE)).to.be.revertedWithCustomError(
+                magicMarketplace,
+                "MagicMarketplace__NotListed"
+            )
+        })
+
+        it("Successfully updates price of listing", async function(){
+            await magicMarketplace.listItemForSale(mockNFT.address, TOKEN_ID, PRICE)
+            const originalListing = await magicMarketplace.fetchListing(mockNFT.address, TOKEN_ID)
+            assert.equal(originalListing.price.toString(), PRICE.toString())
+
+            const NEW_PRICE = ethers.utils.parseEther("0.002")
+            await magicMarketplace.updateListing(mockNFT.address, TOKEN_ID, NEW_PRICE)
+            const updatedListing = await magicMarketplace.fetchListing(mockNFT.address, TOKEN_ID)
+            assert.equal(updatedListing.price.toString(), NEW_PRICE.toString())
+        })
+
+        it("Emits ItemListed event when listing price is updated by owner", async function(){
+            await magicMarketplace.listItemForSale(mockNFT.address, TOKEN_ID, PRICE)
+            const NEW_PRICE = ethers.utils.parseEther("0.002")
+            expect(await magicMarketplace.updateListing(mockNFT.address, TOKEN_ID, NEW_PRICE)).to.emit("ItemListed")
+        })
+    })
+
+    describe("withdrawProceeds", function(){
+
+        it("Reverts when user does not have any proceeds to collect", async function(){
+            await expect(magicMarketplace.withdrawProceeds()).to.be.revertedWithCustomError(
+                magicMarketplace,
+                "MagicMarketplace__NoProceeds"
+            )
+        })
+
+        it("Successfully withdraws proceeds to user wallet", async function(){
+            await magicMarketplace.listItemForSale(mockNFT.address, TOKEN_ID, PRICE)
+            // connect guest
+            await magicMarketplace.connect(guest)
+            // buy item
+            await magicMarketplace.buyItem(mockNFT.address, TOKEN_ID, { value: PRICE })
+            // reconnect seller
+            await magicMarketplace.connect(deployer)
+
+            const proceedsPreWithdrawal = await magicMarketplace.fetchProceeds(deployer.address)
+            assert.equal(proceedsPreWithdrawal.toString(), PRICE.toString())
+
+            // withdraw proceeds
+            await magicMarketplace.withdrawProceeds()
+
+            const proceedsPostWithdrawal = await magicMarketplace.fetchProceeds(deployer.address)
+            assert.equal(proceedsPostWithdrawal.toString(), "0")
+        })
+
+        it("Emits ProceedsCollected event when proceeds withdrawn by owner", async function(){
+            await magicMarketplace.listItemForSale(mockNFT.address, TOKEN_ID, PRICE)
+            // connect guest
+            await magicMarketplace.connect(guest)
+            // buy item
+            await magicMarketplace.buyItem(mockNFT.address, TOKEN_ID, { value: PRICE })
+            // reconnect seller
+            await magicMarketplace.connect(deployer)
+            // withdraw proceeds and emit (Need to add the ProceedsCollected event in contract)
+            expect(await magicMarketplace.withdrawProceeds()).to.emit("ProceedsCollected")
+        })
+    })
 })

@@ -54,6 +54,11 @@ contract MagicMarketplace is ReentrancyGuard {
         uint256 indexed tokenId,
         uint256 price
     );
+
+    event ProceedsCollected(
+        address indexed account,
+        uint256 amount
+    );
   
     using Counters for Counters.Counter;
     Counters.Counter private s_itemIds;
@@ -216,6 +221,8 @@ contract MagicMarketplace is ReentrancyGuard {
         if (!success){
             revert MagicMarketplace__TransferFailed();
         }
+        
+        emit ProceedsCollected(msg.sender, proceeds);
     }
 
 
@@ -261,7 +268,9 @@ contract MagicMarketplace is ReentrancyGuard {
     }
 
     function fetchItemsForSaleCount() public view returns (uint256){
-        return s_itemIds.current();
+        uint itemCount = s_itemIds.current();
+        uint unsoldItemCount = itemCount - s_itemsSold.current();
+        return unsoldItemCount;
     }
 
     function fetchItemsSoldCount() public view returns (uint256){
