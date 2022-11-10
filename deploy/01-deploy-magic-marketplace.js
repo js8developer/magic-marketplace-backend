@@ -17,16 +17,23 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         waitConfirmations: network.config.blockConfirmations || 1
     })
 
-    fs.writeFileSync('./config.js', `
-        const magicMarketplaceAddress = "${magicMarketplace.address}"
-    `)
-
     if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY){
         log("Verifying...")
         await verify(magicMarketplace.address, args)
     }
 
     log("------------------------------------------")
+
+    if (chainId != 31337){
+        // Keep a copy here in the config.js file
+        fs.writeFileSync('./addresses/MagicMarketplace.js', `
+            const magicMarketplaceAddress = "${magicMarketplace.address}"
+        `)
+        // Write updated contract to the frontend
+        fs.writeFileSync('../magic-marketplace-frontend/src/blockchain/address/MagicMarketplace.js', `
+            export const magicMarketplaceAddress = "${magicMarketplace.address}"
+        `)
+    }
 }
 
 module.exports.tags = ["all", "magic-marketplace"]

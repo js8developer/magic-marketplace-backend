@@ -34,6 +34,8 @@
     "hardhat-deploy": "^0.11.18",
     "hardhat-gas-reporter": "^1.0.8",
     "solidity-coverage": "^0.8.0",
-    "typechain": "^8.1.0"
+    "typechain": "^8.1.0",
+    "@pinata/sdk": "^1.2.1",
+    "path": "^0.12.7"
   }
 }
