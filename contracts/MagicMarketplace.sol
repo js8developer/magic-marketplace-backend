@@ -35,6 +35,7 @@ contract MagicMarketplace is ReentrancyGuard {
         bool sold;
     }
 
+
     event ItemListed(
         address indexed seller,
         address indexed nftAddress,

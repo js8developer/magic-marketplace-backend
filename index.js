@@ -16,17 +16,23 @@ app.listen(port, () => {
 
 // NFTs - General
 const { fetchNFTMetadata, fetchWalletNFTs } = require("./routes/nfts");
-app.get('/nftMetadata', fetchNFTMetadata)
+app.get('/nft-metadata', fetchNFTMetadata)
 app.get('/user-nfts', fetchWalletNFTs)
-
 
 // Marketplace
 const { fetchMarketItems, fetchMarketItem } = require('./routes/marketplace')
-app.get('/fetchMarketItems', fetchMarketItems)
-app.get('/fetchMarketItem', fetchMarketItem)
-
+app.get('/market-items', fetchMarketItems)
+app.get('/market-item', fetchMarketItem)
 
 // Experiences
 const { fetchExperiences } = require("./routes/experiences");
 app.get('/experiences', fetchExperiences)
+
+// Collections
+const { fetchNFTCollections } = require("./routes/nft-collections");
+app.get('/nft-collections', fetchNFTCollections)
+
+// Token Prices
+const { fetchTokenPrices } = require("./routes/token-prices");
+app.get('/token-prices', fetchTokenPrices)
 
