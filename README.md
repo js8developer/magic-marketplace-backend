@@ -1,11 +1,11 @@
-# Disney Magic Marketplace - Frontend
+# Disney Magic Marketplace - Backend
 
 A fun Disney-inspired NFT Marketplace where users can buy and sell their Disney NFTs via the “Magic Marketplace”. Users can also mint new digital collectible NFTs from their favorite Disney collections. Users who hold these Disney NFTs can then unlock the ability to mint tickets (NFTs) to new “Experiences”.
 
 Deployed on the Goerli Testnet (ETH)
 
-- Frontend: Current Repo 🤓
-- Backend: https://github.com/js8developer/magic-marketplace-backend
+- Frontend: https://github.com/js8developer/magic-marketplace-frontend
+- Backend: Current Repo 🤓
 
 ![MainPages@2x](https://user-images.githubusercontent.com/36863375/201825895-db0aa393-608a-455c-93b4-abcadd47e661.png)
 
