@@ -47,5 +47,6 @@ Frontend
 - JavaScript
 - Ethers
 - Axios
+- TailwindCSS
 
 -- -- -- -- -- --
