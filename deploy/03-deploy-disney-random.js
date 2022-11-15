@@ -2,6 +2,7 @@ const { networkConfig } = require("../helper-hardhat-config")
 const { network, ethers } = require("hardhat")
 const { verify } = require("../utils/verify")
 const { storeImages, storeTokenUriMetadata } = require("../utils/uploadToPinata")
+const fs = require('fs');
 
 const imagesLocation = "./images/DisneyRandom"
 const metadataTemplate = {

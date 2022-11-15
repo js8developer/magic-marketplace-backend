@@ -1,7 +1,12 @@
 const { ethers } = require("hardhat")
 
-const { magicMarketplaceAddress } = require("../addresses/MagicMarketplace")
-const MagicMarketplaceABI = require('../artifacts/contracts/MagicMarketplace.sol/MagicMarketplace.json')
+const { 
+  magicMarketplaceAddress
+} = require("../addresses")
+
+const { 
+  MagicMarketplaceABI
+} = require("../abis")
 
 
 async function fetchMarketItems(req, res){

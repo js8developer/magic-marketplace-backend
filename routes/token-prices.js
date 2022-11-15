@@ -5,6 +5,8 @@ async function fetchTokenPrices(req, res){
     // if (response.data){
     //     res.send(response.data);
     // }
+
+    // will use mock response instead of throttling rate limit
     const mockResponse = {
         "ethereum" : {
             "usd" : 1300

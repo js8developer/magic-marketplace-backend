@@ -14,7 +14,7 @@ async function fetchNFTMetadata(req, res){
       res.send(response.data);
     } 
     catch (error){
-      res.send(error)
+      console.log(error)
     }
 }
 
@@ -32,7 +32,7 @@ async function fetchWalletNFTs(req, res){
       res.send(response.data)
     } 
     catch (error){
-      res.send(error)
+      console.log(error)
     }
 }
 

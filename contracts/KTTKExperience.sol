@@ -48,12 +48,9 @@ contract KTTKExperience is ERC721 {
     }
 
     function mintNft() private {
-        // increment first! seen in openzeppelin contracts.
         s_tokenIds.increment();
-        // mint nft
         uint256 newTokenId = s_tokenIds.current();
         _safeMint(msg.sender, newTokenId);
-
         emit TicketMinted(msg.sender, 1);
     }
 
@@ -62,7 +59,6 @@ contract KTTKExperience is ERC721 {
     // // // // // // //
 
     function walletHoldsNFT() public view returns(bool){
-        // Check StitchNft collection if the msg.sender owns an nft
         return s_RootNFT.balanceOf(msg.sender) > 0;
     }
 
