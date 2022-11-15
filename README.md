@@ -36,7 +36,7 @@ View your NFTs & List them on the Marketplace
 
 -- -- -- -- -- --
 
-Smart Contracts:
+## Smart Contracts:
 - Deployed on the Goerli Testnet (ETH)
 - Viewable at https://goerli.etherscan.io/
 
@@ -54,6 +54,8 @@ Experiences:
 - Keys to the Kingdom Tour: 0x91734b50Ee1D5952BD149B9fe3063501EEd6c167
 
 -- -- -- -- -- --
+
+## Tech Stack
 
 Backend
 - Solidity
