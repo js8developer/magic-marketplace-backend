@@ -1,4 +1,4 @@
-# Magic Marketplace - Backend
+# Disney Magic Marketplace - Backend
 
 A fun Disney-inspired NFT Marketplace where users can buy and sell their Disney NFTs via the “Magic Marketplace”. Users can also mint new digital collectible NFTs from their favorite Disney collections. Users who hold these Disney NFTs can then unlock the ability to mint tickets (NFTs) to new “Experiences”.
 
