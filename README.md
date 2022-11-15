@@ -12,25 +12,51 @@ Deployed on the Goerli Testnet (ETH)
 -- -- -- -- -- --
 ## Sample Flows
 
-Buy & Update Marketplace Items
+### Buy & Update Marketplace Items
 
 ![Group](https://user-images.githubusercontent.com/36863375/201873593-6880902c-7a20-45c0-a021-a66dc91c87d0.png)
 
 -- -- -- -- -- --
 
-Mint NFT from Collection
+### Mint NFT from Collection
 
 ![Group 2](https://user-images.githubusercontent.com/36863375/201873605-d3cb5ec5-4d7a-4c91-b71f-ffc00b21ea3b.png)
 
+### Possible Mints
+
+![Group 8](https://user-images.githubusercontent.com/36863375/201880560-70583b4c-ce2e-4358-b2e8-9c347d13de9d.png)
+
+### Rarity Tables:
+
+- Inside Out: 
+  - Joy - 13% - Super Rare
+  - Disgust - 17% - Rare
+  - Sadness - 20% - Uncommon
+  - Fear - 25% - Common
+  - Anger - 25% - Common
+
+- Frozen: 
+  - Marshmallow - 8% - Super Rare
+  - Snowgies - 12% - Rare
+  - Elsa - 15% - Uncommon
+  - Anna - 15% - Uncommon
+  - Olaf - 25% - Common
+  - Sven - 25% - Common
+
+- Disney: 
+  - Mickey Mouse - 10% - Super Rare
+  - Minnie Mouse - 20% - Rare
+  - Goofy - 70% - Common
+  
 -- -- -- -- -- --
 
-Mint Tickets (NFTs) to Experiences based on the NFTs you hold
+### Mint Tickets (NFTs) to Experiences based on the NFTs you hold
 
 ![Group 3](https://user-images.githubusercontent.com/36863375/201873621-c2ab9e82-4718-403c-bd22-27a9ba1b5dce.png)
 
 -- -- -- -- -- --
 
-View your NFTs & List them on the Marketplace
+### View your NFTs & List them on the Marketplace
 
 ![Group 4](https://user-images.githubusercontent.com/36863375/201873641-41954076-2529-4446-a0c0-51e214a35304.png)
 
@@ -40,15 +66,15 @@ View your NFTs & List them on the Marketplace
 - Deployed on the Goerli Testnet (ETH)
 - Viewable at https://goerli.etherscan.io/
 
-Marketplace: 
+### Marketplace: 
 - Magic Marketplace: 0xe660499C9eA555555338c0c02934A4543dcb6A85
 
-NFT Collections:
+### NFT Collections:
 - Inside Out NFT: 0xDE380d64c8DF3b72B2463301e0Ee5a3bb78639C1
 - Frozen NFT: 0xEcbccd83B20a69aa972ad520Cc6F47768FDA8AFC
 - Disney NFT: 0xB74dc714ECf429e2cd3BB2c572C3F7b1861AE75c
 
-Experiences:
+### Experiences:
 - Disney After Hours at Magic Kingdom Park: 0xE999cA3C3e8f67c3DF20aE408C6225e25587bd7D
 - Mickey's Very Mery Christmas Party: 0x61dBeF44AF21A47F2eA7c9eFA374B39018FB8A52
 - Keys to the Kingdom Tour: 0x91734b50Ee1D5952BD149B9fe3063501EEd6c167
@@ -57,7 +83,7 @@ Experiences:
 
 ## Tech Stack
 
-Backend
+### Backend
 - Solidity
 - JavaScript
 - Express
@@ -70,7 +96,7 @@ Backend
 - OpenZeppelin
 - Chainlink Oracles for Minting Randomness
 
-Frontend
+### Frontend
 - React
 - JavaScript
 - Ethers
