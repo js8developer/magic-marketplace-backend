@@ -1,13 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
-// 1. Create a decentralized NFT Marketplace
-//     1. `listItem`: List NFTs on the marketplace
-//     2. `buyItem`: Buy the NFTs
-//     3. `cancelItem`: Cancel a listing
-//     4. `updateListing`: Update listing price
-//     5. `withdrawProceeds`: Withdraw payment for my sold NFTs
-
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
@@ -23,6 +16,12 @@ error MagicMarketplace__NoProceeds();
 error MagicMarketplace__TransferFailed();
 
 
+/** @title A contract for the Magic Marketplace
+*   @author Jason Schneider
+*   @notice This contract is to demo an NFT marketplace where users can buy and sell NFTs
+*           on a decentralized marketplace.
+*/
+
 contract MagicMarketplace is ReentrancyGuard {
 
     struct MarketItem {
@@ -34,7 +33,6 @@ contract MagicMarketplace is ReentrancyGuard {
         uint price;
         bool sold;
     }
-
 
     event ItemListed(
         address indexed seller,
@@ -69,20 +67,34 @@ contract MagicMarketplace is ReentrancyGuard {
     mapping(address => mapping(uint256 => MarketItem)) private s_listings;
     mapping(address => uint) private s_proceeds;
 
+
     // // // // // // //
     // Modifiers
     // // // // // // //
 
-    // check to make sure the nft is not already listed. if it already has a price, that means it is already created. 
+    /**
+    *   @notice This modifier checks to make sure the nft is not already listed.
+    *   @param nftAddress The address of the nft 
+    *   @param tokenId The tokenId of the nft
+    *   @param owner The owner of the potential listing
+    */
     modifier notListed(address nftAddress, uint256 tokenId, address owner) {
+        // if it already has a price, that means it is already created. 
         MarketItem memory listing = s_listings[nftAddress][tokenId];
         if (listing.price > 0){
             revert MagicMarketplace__AlreadyListed(nftAddress, tokenId);
         }
         _;
     }
-    // check to make sure the caller is the owner of the nftAddress they are supplying. 
+
+    /**
+    *   @notice This modifier checks to make sure the caller is the owner of the nftAddress they are supplying.
+    *   @param nftAddress The address of the nft 
+    *   @param tokenId The tokenId of the nft
+    *   @param spender The caller of the function
+    */
     modifier isOwner(address nftAddress, uint256 tokenId, address spender) {
+        // check to make sure the caller is the owner of the nftAddress they are supplying. 
         IERC721 nft = IERC721(nftAddress);
         address owner = nft.ownerOf(tokenId);
         if (spender != owner) {
@@ -90,11 +102,17 @@ contract MagicMarketplace is ReentrancyGuard {
         }
         _;
     }
-    // check to see if the nft is already listed in the marketplace.
+    
+    /**
+    *   @notice This modifier checks to see if the nft is already listed on the marketplace.
+    *   @param nftAddress The address of the nft looking to be listed for sale on the marketplace
+    *   @param tokenId The tokenId of the nft looking to be listed for sale on the marketplace
+    */
     modifier isListed(
         address nftAddress,
         uint256 tokenId
     ) {
+        // 
         MarketItem memory listing = s_listings[nftAddress][tokenId];
         if (listing.price <= 0){
             revert MagicMarketplace__NotListed(nftAddress, tokenId);
@@ -107,7 +125,12 @@ contract MagicMarketplace is ReentrancyGuard {
     // Main Functions
     // // // // // // //
 
-    // 1. `listItem`: List NFTs on the marketplace
+    /**
+    *   @notice This function list NFTs on the marketplace
+    *   @param nftAddress The address of the nft being listed for sale on the marketplace
+    *   @param tokenId The tokenId of the nft being listed for sale on the marketplace
+    *   @param price The listing price for this nft
+    */
     function listItemForSale(
         address nftAddress, 
         uint tokenId, 
@@ -158,7 +181,11 @@ contract MagicMarketplace is ReentrancyGuard {
         emit ItemListed(msg.sender, nftAddress, tokenId, price);
     }
 
-    // 2. `buyItem`: Buy the NFTs
+    /**
+    *   @notice This function buys NFTs on the marketplace
+    *   @param nftAddress The address of the nft looking to be purchased
+    *   @param tokenId The tokenId of the nft looking to be purchased
+    */
     function buyItem(address nftAddress, uint tokenId) 
     external 
     payable 
@@ -189,7 +216,11 @@ contract MagicMarketplace is ReentrancyGuard {
         emit ItemBought(msg.sender, nftAddress, tokenId, listedItem.price);
     }
 
-    // 3. `cancelItem`: Cancel a listing
+    /**
+    *   @notice This function cancels a current listing on the marketplace
+    *   @param nftAddress The address of the nft listed
+    *   @param tokenId The tokenId of the nft listed
+    */
     function cancelListing(address nftAddress, uint256 tokenId) external
     isOwner(nftAddress, tokenId, msg.sender)
     isListed(nftAddress, tokenId)
@@ -200,7 +231,12 @@ contract MagicMarketplace is ReentrancyGuard {
         emit ItemCanceled(msg.sender, nftAddress, tokenId);
     }
 
-    // 4. `updateListing`: Update listing price
+    /**
+    *   @notice This function updates the price of a current listing on the marketplace
+    *   @param nftAddress The address of the nft listed
+    *   @param tokenId The tokenId of the nft listed
+    *   @param newPrice The new price that the user wants to list the nft for in ETH
+    */
     function updateListing(address nftAddress, uint256 tokenId, uint256 newPrice) external
     isOwner(nftAddress, tokenId, msg.sender)
     isListed(nftAddress, tokenId)
@@ -211,7 +247,9 @@ contract MagicMarketplace is ReentrancyGuard {
         emit ItemListed(msg.sender, nftAddress, tokenId, newPrice);
     }
 
-    // 5. `withdrawProceeds`: Withdraw payment for my sold NFTs
+    /**
+    *   @notice This function withdraws the earnings for an accounts sold NFTs on the marketplace
+    */
     function withdrawProceeds() external {
         uint256 proceeds = s_proceeds[msg.sender];
         if (proceeds <= 0){
@@ -231,7 +269,10 @@ contract MagicMarketplace is ReentrancyGuard {
     // Getter Functions
     // // // // // // //
 
-    // Display Market items => MarketItem[]
+    /**
+    *   @notice This function fetches the MarketItems currently listed on the marketplace
+    *   @return MarketItems The MarketItems currently listed on the marketplace
+    */
     function fetchMarketItems() public view returns (MarketItem[] memory){
         uint itemCount = s_itemIds.current();
         uint unsoldItemCount = itemCount - s_itemsSold.current();
@@ -251,6 +292,12 @@ contract MagicMarketplace is ReentrancyGuard {
         return items;
     }
 
+    /**
+    *   @notice This function checks if the nft being listed is approved for listing on the marketplace
+    *   @param nftAddress The address of the nft you want to look up
+    *   @param tokenId The tokenId of the nft you want to look up
+    *   @return isApproved If the nft is approved to be listed by the marketplace
+    */
     function nftIsApprovedForListing(address nftAddress, uint tokenId) private view returns(bool){
          // create a nft object
         IERC721 nft = IERC721(nftAddress);
@@ -260,24 +307,48 @@ contract MagicMarketplace is ReentrancyGuard {
         return true;
     }
 
+    /**
+    *   @notice This function fetches a specific MarketItem currently listed on the marketplace based on itemId
+    *   @param itemId The itemId of the MarketItem you want to look up
+    *   @return MarketItem The MarketItem being searched for  
+    */
     function fetchMarketItem(uint256 itemId) public view returns(MarketItem memory){
         return s_marketItems[itemId];
     }
 
+    /**
+    *   @notice This function fetches a specific MarketItem currently listed on the marketplace based on nftAddress and tokenId
+    *   @param nftAddress The address of the nft you want to look up
+    *   @param tokenId The tokenId of the nft you want to look up
+    *   @return MarketItem The listing being searched for
+    */
     function fetchListing(address nftAddress, uint256 tokenId) public view returns(MarketItem memory){
         return s_listings[nftAddress][tokenId];
     }
 
+    /**
+    *   @notice This function fetches the count of current items for sale on the marketplace
+    *   @return ItemsForSaleCount The count of current items for sale on the marketplace
+    */
     function fetchItemsForSaleCount() public view returns (uint256){
         uint itemCount = s_itemIds.current();
         uint unsoldItemCount = itemCount - s_itemsSold.current();
         return unsoldItemCount;
     }
 
+    /**
+    *   @notice This function fetches the count of items sold on the marketplace
+    *   @return ItemsSoldCount The count of items sold on the marketplace
+    */
     function fetchItemsSoldCount() public view returns (uint256){
         return s_itemsSold.current();
     }
 
+    /**
+    *   @notice This function fetches the earnings of an address from their sales on the marketplace
+    *   @param _address The address of the wallet you want to fetch the earnings for
+    *   @return Proceeds The earnings of the address passed
+    */
     function fetchProceeds(address _address) public view returns(uint256){
         return s_proceeds[_address];
     }

@@ -122,7 +122,7 @@ contract DisneyRandomNFT is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     function getChanceArray() public pure returns(uint256[3] memory){
         // Mickey - 10% chance
         // Minnie - 20% chance
-        // Goofy - 60% chance
+        // Goofy - 70% chance
         return [10, 30, MAX_CHANCE_VALUE];
     }
 
